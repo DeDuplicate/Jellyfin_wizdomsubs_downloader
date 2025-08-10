@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "7f9a7b9b-2c61-4c2f-9a1e-6cf5b2c9d111",
+    "name": "WizdomSubs Downloader",
+    "description": "Hebrew subtitle downloads from WizdomSubs for Jellyfin (movies & episodes).",
+    "overview": "Hebrew subtitle downloads from WizdomSubs for Jellyfin (movies & episodes).",
+    "owner": "DeDuplicate",
+    "imageUrl": "https://raw.githubusercontent.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/main/assets/WizdomSubsLogo.png",
+    "category": "Subtitles",
+    "versions": [
+      {
+        "version": "0.1.0",
+        "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0/WizdomSubsDownloader.zip",
+        "checksum": "905b08eb08934b4857b891e9eff2a601",
+        "timestamp": "2025-08-10T00:00:00"
+      }
+    ]
+  }
+]

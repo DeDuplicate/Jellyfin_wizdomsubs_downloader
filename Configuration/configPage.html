@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WizdomSubs Downloader</title>
+</head>
+<body>
+  <div data-role="page" class="page type-interior pluginConfigurationPage wizdomsubsConfigurationPage" data-require="emby-button,emby-select,emby-input">
+    <div data-role="content">
+      <div class="content-primary">
+        <form class="wizdomsubsConfigurationForm">
+          <h1>WizdomSubs Downloader</h1>
+          <div class="inputContainer">
+            <label class="inputLabel" for="wizdomBaseUrl">Base URL</label>
+            <input is="emby-input" id="wizdomBaseUrl" type="text" />
+          </div>
+          <div class="inputContainer">
+            <label class="inputLabel" for="preferredLangs">Preferred Languages (CSV)</label>
+            <input is="emby-input" id="preferredLangs" type="text" />
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input is="emby-checkbox" id="overwriteExisting" type="checkbox" />
+              <span>Overwrite existing subtitles</span>
+            </label>
+          </div>
+          <button is="emby-button" type="submit" class="raised button-submit block">Save</button>
+        </form>
+
+        <hr/>
+        <h2>Search & Download</h2>
+        <div class="inputContainer">
+          <label class="inputLabel" for="imdbId">IMDb ID (tt...)</label>
+          <input is="emby-input" id="imdbId" type="text" />
+        </div>
+        <div class="inputContainer">
+          <label class="inputLabel" for="season">Season</label>
+          <input is="emby-input" id="season" type="number" />
+        </div>
+        <div class="inputContainer">
+          <label class="inputLabel" for="episode">Episode</label>
+          <input is="emby-input" id="episode" type="number" />
+        </div>
+        <div class="inputContainer">
+          <label class="inputLabel" for="filename">Filename (to sort by)</label>
+          <input is="emby-input" id="filename" type="text" />
+        </div>
+        <div class="inputContainer">
+          <label class="inputLabel" for="itemId">Jellyfin Item Id (to save next to)</label>
+          <input is="emby-input" id="itemId" type="text" />
+        </div>
+        <button is="emby-button" type="button" id="btnSearch" class="raised">Search Wizdom</button>
+        <button is="emby-button" type="button" id="btnDownload" class="raised">Download First to Item Folder</button>
+        <pre id="searchOutput"></pre>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    (function(){
+      const pluginId = '7f9a7b9b-2c61-4c2f-9a1e-6cf5b2c9d111';
+      const $ = id => document.getElementById(id);
+
+      document.querySelector('.wizdomsubsConfigurationForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const body = {
+          WizdomBaseUrl: $('wizdomBaseUrl').value,
+          PreferredLanguages: $('preferredLangs').value,
+          OverwriteExisting: $('overwriteExisting').checked
+        };
+        ApiClient.updatePluginConfiguration(pluginId, body).then(()=>{
+          Dashboard.alert({ message: 'Saved' });
+        });
+      });
+
+      ApiClient.getPluginConfiguration(pluginId).then(cfg=>{
+        $('wizdomBaseUrl').value = cfg.WizdomBaseUrl || 'https://www.wizdom.xyz';
+        $('preferredLangs').value = cfg.PreferredLanguages || 'he,he-IL';
+        $('overwriteExisting').checked = cfg.OverwriteExisting || false;
+      });
+
+      $('btnSearch').addEventListener('click', async () => {
+        const body = {
+          ImdbId: $('imdbId').value,
+          Season: $('season').value ? parseInt($('season').value) : null,
+          Episode: $('episode').value ? parseInt($('episode').value) : null,
+          Filename: $('filename').value || null
+        };
+        try {
+          const resp = await ApiClient.ajax({
+            type: 'POST',
+            url: ApiClient.getUrl('WizdomSubs/Search'),
+            data: JSON.stringify(body),
+            contentType: 'application/json'
+          });
+          $('searchOutput').textContent = JSON.stringify(resp, null, 2);
+        } catch(e) {
+          $('searchOutput').textContent = 'Search failed';
+        }
+      });
+
+      $('btnDownload').addEventListener('click', async () => {
+        const body = {
+          ItemId: $('itemId').value,
+          ImdbId: $('imdbId').value,
+          Season: $('season').value ? parseInt($('season').value) : null,
+          Episode: $('episode').value ? parseInt($('episode').value) : null,
+          Filename: $('filename').value || null,
+          LanguageCode: 'he',
+          OverwriteExisting: $('overwriteExisting').checked
+        };
+        try {
+          const resp = await ApiClient.ajax({
+            type: 'POST',
+            url: ApiClient.getUrl('WizdomSubs/DownloadToItemFolder'),
+            data: JSON.stringify(body),
+            contentType: 'application/json'
+          });
+          Dashboard.alert({ message: 'Saved to: ' + resp.Path });
+        } catch(e) {
+          Dashboard.alert({ message: 'Download failed' });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -18,8 +18,8 @@
       "name": "WizdomSubsDownloader.zip",
       "framework": "net8.0",
   "targetAbi": "10.10.7.0",
-  "url": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0.0/WizdomSubsDownloader.zip",
-  "checksum": "sha256:aedcac7e450388d8b83ebb5c38b4e2f2eec0c6a8dab50118748cf25de1353ec8"
+  "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0.0/WizdomSubsDownloader.zip",
+  "checksum": "78bc373db48f5d5f53602142d3ff9e45"
     }
   ]
 }

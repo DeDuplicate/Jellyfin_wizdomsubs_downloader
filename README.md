@@ -2,7 +2,7 @@
 
 A Jellyfin plugin that downloads Hebrew subtitles from WizdomSubs (https://www.wizdom.xyz/) by IMDB ID and attaches them to your media so Jellyfin can use them.
 
-Status: Scaffolded. Subtitle provider implementation pending (WizdomSubs API integration).
+Status: Preview release 0.1.0. Core subtitle provider implemented; manual search & download working.
 
 ## Features (planned)
 - Search WizdomSubs by IMDB ID for movies and TV episodes

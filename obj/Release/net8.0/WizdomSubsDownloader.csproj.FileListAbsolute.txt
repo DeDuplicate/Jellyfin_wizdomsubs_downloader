@@ -1,0 +1,12 @@
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\bin\Release\net8.0\WizdomSubsDownloader.deps.json
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\bin\Release\net8.0\WizdomSubsDownloader.dll
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\bin\Release\net8.0\WizdomSubsDownloader.pdb
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.csproj.AssemblyReference.cache
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.GeneratedMSBuildEditorConfig.editorconfig
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.AssemblyInfoInputs.cache
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.AssemblyInfo.cs
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.csproj.CoreCompileInputs.cache
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.dll
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\refint\WizdomSubsDownloader.dll
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.pdb
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\ref\WizdomSubsDownloader.dll

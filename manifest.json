@@ -10,7 +10,7 @@
   "owner": "DeDuplicate",
   "repositoryUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
   "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
-  "imageUrl": "https://wizdom.xyz/assets/logo-BZuqgtDc.png",
+  "imageUrl": "https://raw.githubusercontent.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/main/assets/WizdomSubsLogo.png",
   "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
   "artifacts": [
     {

@@ -10,7 +10,7 @@
   "owner": "DeDuplicate",
   "repositoryUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
   "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
-  "imageUrl": "",
+  "imageUrl": "https://wizdom.xyz/assets/logo-BZuqgtDc.png",
   "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
   "artifacts": [
     {
@@ -18,7 +18,7 @@
       "name": "WizdomSubsDownloader.zip",
       "framework": "net8.0",
       "targetAbi": "10.10.7.0",
-      "url": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0/WizdomSubsDownloader.zip",
+  "url": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0/WizdomSubsDownloader.zip",
   "checksum": "sha256:5F9DFF0B4B3ECE3F84EBD83C93DAA5646FBAC09F87ADB50A30CF4AB0505002E8"
     }
   ]

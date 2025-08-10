@@ -1,0 +1,25 @@
+{
+  "name": "WizdomSubs Downloader",
+  "guid": "7f9a7b9b-2c61-4c2f-9a1e-6cf5b2c9d111",
+  "version": "0.1.0",
+  "targetAbi": "10.10.7.0",
+  "framework": "net8.0",
+  "overview": "Hebrew subtitle downloads from WizdomSubs for Jellyfin (movies & episodes).",
+  "description": "Provides a Jellyfin subtitle provider that searches WizdomSubs by IMDb id, downloads Hebrew SRT files, and attaches them beside media files.",
+  "category": "Subtitles",
+  "owner": "DeDuplicate",
+  "repositoryUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
+  "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader",
+  "imageUrl": "",
+  "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
+  "artifacts": [
+    {
+      "type": "zip",
+      "name": "WizdomSubsDownloader.zip",
+      "framework": "net8.0",
+      "targetAbi": "10.10.7.0",
+      "url": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0/WizdomSubsDownloader.zip",
+      "checksum": "sha256:REPLACE_WITH_ACTUAL_SHA256"
+    }
+  ]
+}

@@ -18,3 +18,7 @@ In Jellyfin Dashboard -> Plugins -> WizdomSubs Downloader.
 
 ## Notes
 - This initial scaffold includes a placeholder provider class. Implementation will be added next.
+
+- Or add this address to jellyfin catalog
+
+https://raw.githubusercontent.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/refs/heads/main/manifest.json

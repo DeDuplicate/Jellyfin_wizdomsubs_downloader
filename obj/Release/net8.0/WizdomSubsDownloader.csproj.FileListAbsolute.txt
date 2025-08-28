@@ -10,3 +10,4 @@ G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\Wiz
 G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\refint\WizdomSubsDownloader.dll
 G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.pdb
 G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\ref\WizdomSubsDownloader.dll
+G:\Projects\jellyfin oeder\jellyfin_WizdomSubs_downloader\obj\Release\net8.0\WizdomSubsDownloader.sourcelink.json

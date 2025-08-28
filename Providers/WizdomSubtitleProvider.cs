@@ -36,21 +36,32 @@ namespace WizdomSubsDownloader.Providers
         {
             ArgumentNullException.ThrowIfNull(request);
 
+            _logger.LogInformation("WizdomSubs: Search request for {ContentType}, Path: {Path}, Language: {Lang}", 
+                request.ContentType, request.MediaPath, request.Language);
+
             var imdb = request.GetProviderId(MediaBrowser.Model.Entities.MetadataProvider.Imdb);
             if (string.IsNullOrWhiteSpace(imdb))
             {
-                _logger.LogDebug("Wizdom: missing IMDb id for media {Path}", request.MediaPath);
+                _logger.LogWarning("WizdomSubs: Missing IMDb ID for {ContentType} at {Path}", 
+                    request.ContentType, request.MediaPath);
                 return Enumerable.Empty<RemoteSubtitleInfo>();
             }
+
+            _logger.LogDebug("WizdomSubs: Found IMDb ID: {ImdbId}", imdb);
 
             int? season = null, episode = null;
             if (request.ContentType == VideoContentType.Episode)
             {
                 season = request.ParentIndexNumber;
                 episode = request.IndexNumber;
+                
+                _logger.LogDebug("WizdomSubs: Episode request - Season: {Season}, Episode: {Episode}", 
+                    season, episode);
+                
                 if (!season.HasValue || !episode.HasValue)
                 {
-                    _logger.LogDebug("Wizdom: missing S/E numbers for episode {Path}", request.MediaPath);
+                    _logger.LogWarning("WizdomSubs: Missing season/episode numbers for episode {Path} (S:{Season} E:{Episode})", 
+                        request.MediaPath, season?.ToString() ?? "null", episode?.ToString() ?? "null");
                     return Enumerable.Empty<RemoteSubtitleInfo>();
                 }
             }
@@ -69,12 +80,14 @@ namespace WizdomSubsDownloader.Providers
                 url = $"{WizdomApiBase}/search?action=by_id&imdb={imdb}&season=0&episode=0";
             }
             
-            _logger.LogDebug("Wizdom API URL: {Url}", url);
+            _logger.LogInformation("WizdomSubs: API URL: {Url}", url);
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 var json = await _http.GetStringAsync(url, cts.Token).ConfigureAwait(false);
                 var subs = System.Text.Json.JsonSerializer.Deserialize<List<WizdomSub>>(json) ?? new List<WizdomSub>();
+
+                _logger.LogDebug("WizdomSubs: Found {Count} subtitles from API", subs.Count);
 
                 // Optional filename similarity sort
                 if (!string.IsNullOrWhiteSpace(request.MediaPath))
@@ -85,18 +98,30 @@ namespace WizdomSubsDownloader.Providers
 
                 var lang3 = string.IsNullOrWhiteSpace(request.Language) ? "heb" : request.Language; // Jellyfin uses 3-letter
 
-                return subs.Select(s => new RemoteSubtitleInfo
+                var results = subs.Select(s => new RemoteSubtitleInfo
                 {
                     Id = $"srt-{lang3}-{s.id}",
-                    Name = s.versioname,
+                    Name = s.versioname ?? $"Wizdom Subtitle #{s.id}",
                     ProviderName = Name,
                     ThreeLetterISOLanguageName = lang3,
-                    Format = "srt"
+                    Format = "srt",
+                    IsHashMatch = false,
+                    Comment = $"Wizdom ID: {s.id}"
                 }).ToList();
+
+                _logger.LogInformation("WizdomSubs: Returning {Count} results for {ContentType}", 
+                    results.Count, request.ContentType);
+                
+                return results;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "WizdomSubs: HTTP error searching for {Imdb} S{S}E{E}", imdb, season, episode);
+                return Enumerable.Empty<RemoteSubtitleInfo>();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Wizdom search failed for {Imdb} S{S}E{E}", imdb, season, episode);
+                _logger.LogError(ex, "WizdomSubs: Unexpected error searching for {Imdb} S{S}E{E}", imdb, season, episode);
                 return Enumerable.Empty<RemoteSubtitleInfo>();
             }
         }

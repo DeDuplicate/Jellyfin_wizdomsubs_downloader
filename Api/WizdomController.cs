@@ -35,7 +35,21 @@ namespace WizdomSubsDownloader.Api
             if (string.IsNullOrWhiteSpace(req.ImdbId))
                 return BadRequest("ImdbId is required");
 
-            var url = $"{WizdomApiBase}/search?action=by_id&imdb={req.ImdbId}&season={req.Season}&episode={req.Episode}";
+            // Wizdom API always expects season and episode parameters
+            // For movies: use season=0&episode=0
+            // For TV episodes: use actual season and episode numbers
+            string url;
+            if (req.Season.HasValue && req.Episode.HasValue && (req.Season.Value > 0 || req.Episode.Value > 0))
+            {
+                url = $"{WizdomApiBase}/search?action=by_id&imdb={req.ImdbId}&season={req.Season.Value}&episode={req.Episode.Value}";
+            }
+            else
+            {
+                // For movies or when season/episode are not provided, use 0 values
+                url = $"{WizdomApiBase}/search?action=by_id&imdb={req.ImdbId}&season=0&episode=0";
+            }
+            
+            _logger.LogDebug("Wizdom API URL: {Url}", url);
             using var http = new HttpClient();
             try
             {

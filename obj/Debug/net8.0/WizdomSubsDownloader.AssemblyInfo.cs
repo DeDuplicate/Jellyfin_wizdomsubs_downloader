@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WizdomSubsDownloader")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63b65b0101dc24975133208e93dbc37f04ca6576")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16bf884985f5bcfea39bd266ce3bdad44be184c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("WizdomSubsDownloader")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WizdomSubsDownloader")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

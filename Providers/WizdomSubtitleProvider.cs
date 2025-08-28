@@ -55,7 +55,21 @@ namespace WizdomSubsDownloader.Providers
                 }
             }
 
-            var url = $"{WizdomApiBase}/search?action=by_id&imdb={imdb}&season={season}&episode={episode}";
+            // Wizdom API always expects season and episode parameters
+            // For movies: use season=0&episode=0
+            // For TV episodes: use actual season and episode numbers
+            string url;
+            if (request.ContentType == VideoContentType.Episode && season.HasValue && episode.HasValue)
+            {
+                url = $"{WizdomApiBase}/search?action=by_id&imdb={imdb}&season={season.Value}&episode={episode.Value}";
+            }
+            else
+            {
+                // For movies, use season=0 and episode=0 as per Wizdom API convention
+                url = $"{WizdomApiBase}/search?action=by_id&imdb={imdb}&season=0&episode=0";
+            }
+            
+            _logger.LogDebug("Wizdom API URL: {Url}", url);
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);

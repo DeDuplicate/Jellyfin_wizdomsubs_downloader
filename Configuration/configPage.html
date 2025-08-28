@@ -24,6 +24,11 @@
               <span>Overwrite existing subtitles</span>
             </label>
           </div>
+          <div class="inputContainer">
+            <label class="inputLabel" for="seriesMappings">Series Name to IMDb ID Mappings</label>
+            <textarea is="emby-input" id="seriesMappings" rows="10" placeholder="Series Name:tt1234567&#10;Another Series:tt9876543"></textarea>
+            <div class="fieldDescription">One mapping per line. Format: SeriesName:IMDbID (e.g., Banshee:tt2017109)</div>
+          </div>
           <button is="emby-button" type="submit" class="raised button-submit block">Save</button>
         </form>
 
@@ -65,7 +70,8 @@
         const body = {
           WizdomBaseUrl: $('wizdomBaseUrl').value,
           PreferredLanguages: $('preferredLangs').value,
-          OverwriteExisting: $('overwriteExisting').checked
+          OverwriteExisting: $('overwriteExisting').checked,
+          SeriesImdbMappings: $('seriesMappings').value
         };
         ApiClient.updatePluginConfiguration(pluginId, body).then(()=>{
           Dashboard.alert({ message: 'Saved' });
@@ -76,6 +82,7 @@
         $('wizdomBaseUrl').value = cfg.WizdomBaseUrl || 'https://www.wizdom.xyz';
         $('preferredLangs').value = cfg.PreferredLanguages || 'he,he-IL';
         $('overwriteExisting').checked = cfg.OverwriteExisting || false;
+        $('seriesMappings').value = cfg.SeriesImdbMappings || '';
       });
 
       $('btnSearch').addEventListener('click', async () => {

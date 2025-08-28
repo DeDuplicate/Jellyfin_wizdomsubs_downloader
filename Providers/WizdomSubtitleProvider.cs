@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Subtitles;
 using MediaBrowser.Controller.Providers;
+using MediaBrowser.Controller.Library;
+using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.Logging;
@@ -20,12 +23,16 @@ namespace WizdomSubsDownloader.Providers
     {
         private const string WizdomApiBase = "https://wizdom.xyz/api";
         private readonly ILogger<WizdomSubtitleProvider> _logger;
+        private readonly ILibraryManager _libraryManager;
         private readonly HttpClient _http;
+        private PluginConfiguration? _configuration;
 
-        public WizdomSubtitleProvider(ILogger<WizdomSubtitleProvider> logger)
+        public WizdomSubtitleProvider(ILogger<WizdomSubtitleProvider> logger, ILibraryManager libraryManager)
         {
             _logger = logger;
+            _libraryManager = libraryManager;
             _http = new HttpClient();
+            _configuration = Plugin.Instance?.Configuration;
         }
 
     public string Name => "WizdomSubs";
@@ -36,10 +43,51 @@ namespace WizdomSubsDownloader.Providers
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            _logger.LogInformation("WizdomSubs: Search request for {ContentType}, Path: {Path}, Language: {Lang}", 
-                request.ContentType, request.MediaPath, request.Language);
+            _logger.LogInformation("WizdomSubs: Search request for {ContentType}, Path: {Path}, Language: {Lang}, SeriesName: {SeriesName}", 
+                request.ContentType, request.MediaPath, request.Language, request.SeriesName);
+
+            // Log all provider IDs for debugging
+            if (request.ProviderIds != null && request.ProviderIds.Any())
+            {
+                foreach (var providerId in request.ProviderIds)
+                {
+                    _logger.LogDebug("WizdomSubs: Provider ID - {Key}: {Value}", providerId.Key, providerId.Value);
+                }
+            }
 
             var imdb = request.GetProviderId(MediaBrowser.Model.Entities.MetadataProvider.Imdb);
+            
+            // For episodes, Jellyfin often provides the episode-specific IMDb ID (like tt2313681)
+            // But Wizdom needs the series IMDb ID (like tt2017109)
+            // Try to get the series IMDb ID from the library
+            if (request.ContentType == VideoContentType.Episode && !string.IsNullOrWhiteSpace(request.SeriesName))
+            {
+                // First, try to find the series in the library and get its IMDb ID
+                var seriesImdbFromLibrary = await TryGetSeriesImdbId(request.MediaPath, request.SeriesName);
+                if (!string.IsNullOrWhiteSpace(seriesImdbFromLibrary))
+                {
+                    _logger.LogInformation("WizdomSubs: Found series IMDb from library for '{SeriesName}' -> {SeriesImdb} (replacing {EpisodeImdb})", 
+                        request.SeriesName, seriesImdbFromLibrary, imdb);
+                    imdb = seriesImdbFromLibrary;
+                }
+                // Fallback to manual mappings if configured
+                else
+                {
+                    var mappings = _configuration?.GetSeriesMappings() ?? new Dictionary<string, string>();
+                    if (mappings.TryGetValue(request.SeriesName, out var seriesImdb))
+                    {
+                        _logger.LogInformation("WizdomSubs: Found series mapping for '{SeriesName}' -> {SeriesImdb} (replacing {EpisodeImdb})", 
+                            request.SeriesName, seriesImdb, imdb);
+                        imdb = seriesImdb;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("WizdomSubs: No series IMDb found for '{SeriesName}', using episode IMDb which may not work: {ImdbId}", 
+                            request.SeriesName, imdb);
+                    }
+                }
+            }
+            
             if (string.IsNullOrWhiteSpace(imdb))
             {
                 _logger.LogWarning("WizdomSubs: Missing IMDb ID for {ContentType} at {Path}", 
@@ -47,7 +95,7 @@ namespace WizdomSubsDownloader.Providers
                 return Enumerable.Empty<RemoteSubtitleInfo>();
             }
 
-            _logger.LogDebug("WizdomSubs: Found IMDb ID: {ImdbId}", imdb);
+            _logger.LogInformation("WizdomSubs: Final IMDb ID: {ImdbId} for {SeriesName}", imdb, request.SeriesName);
 
             int? season = null, episode = null;
             if (request.ContentType == VideoContentType.Episode)
@@ -180,6 +228,49 @@ namespace WizdomSubsDownloader.Providers
                 _logger.LogError(ex, "Wizdom subtitle download failed for {Id}", id);
                 throw;
             }
+        }
+
+        private Task<string?> TryGetSeriesImdbId(string episodePath, string seriesName)
+        {
+            try
+            {
+                // Try to find the episode item by path
+                var episode = _libraryManager.FindByPath(episodePath, false) as Episode;
+                if (episode?.Series != null)
+                {
+                    var seriesImdb = episode.Series.GetProviderId(MetadataProvider.Imdb);
+                    if (!string.IsNullOrWhiteSpace(seriesImdb))
+                    {
+                        _logger.LogDebug("WizdomSubs: Found series IMDb from episode.Series: {ImdbId}", seriesImdb);
+                        return Task.FromResult<string?>(seriesImdb);
+                    }
+                }
+
+                // If we couldn't find by path, try to search by series name
+                var query = new MediaBrowser.Controller.Entities.InternalItemsQuery
+                {
+                    Name = seriesName,
+                    IncludeItemTypes = new[] { Jellyfin.Data.Enums.BaseItemKind.Series },
+                    Limit = 1
+                };
+                
+                var series = _libraryManager.GetItemList(query).FirstOrDefault() as Series;
+                if (series != null)
+                {
+                    var seriesImdb = series.GetProviderId(MetadataProvider.Imdb);
+                    if (!string.IsNullOrWhiteSpace(seriesImdb))
+                    {
+                        _logger.LogDebug("WizdomSubs: Found series IMDb from library search: {ImdbId}", seriesImdb);
+                        return Task.FromResult<string?>(seriesImdb);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "WizdomSubs: Error trying to get series IMDb ID");
+            }
+            
+            return Task.FromResult<string?>(null);
         }
 
         private static List<WizdomSub> SortByFilename(List<WizdomSub> subs, string baseName)

@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/main/assets/WizdomSubsLogo.png",
     "versions": [
       {
+        "version": "0.2.0.0",
+        "changelog": "Jellyfin 10.11.2 compatibility: Updated to .NET 9.0, fixed ILibraryManager API changes, improved HttpClient management with IHttpClientFactory, automatic series IMDb resolution for TV episodes.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.2.0.0/WizdomSubsDownloader.zip",
+        "checksum": "6a7a2e13587423f424c6c8bb8f7cf4fa",
+        "timestamp": "2025-11-16T21:00:00Z"
+      },
+      {
         "version": "0.1.0.0",
         "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
         "targetAbi": "10.10.7.0",

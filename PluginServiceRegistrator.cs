@@ -13,6 +13,13 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
 {
     public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
+        serviceCollection.AddHttpClient("WizdomSubs", c =>
+        {
+            c.DefaultRequestHeaders.UserAgent.Clear();
+            c.DefaultRequestHeaders.UserAgent.ParseAdd($"{applicationHost.Name}/{applicationHost.ApplicationVersionString}");
+            c.DefaultRequestHeaders.Accept.ParseAdd("*/*");
+        });
+
         serviceCollection.AddSingleton<ISubtitleProvider, WizdomSubtitleProvider>();
     }
 }

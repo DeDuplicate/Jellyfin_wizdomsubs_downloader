@@ -24,14 +24,14 @@ namespace WizdomSubsDownloader.Providers
         private const string WizdomApiBase = "https://wizdom.xyz/api";
         private readonly ILogger<WizdomSubtitleProvider> _logger;
         private readonly ILibraryManager _libraryManager;
-        private readonly HttpClient _http;
+        private readonly IHttpClientFactory _httpClientFactory;
         private PluginConfiguration? _configuration;
 
-        public WizdomSubtitleProvider(ILogger<WizdomSubtitleProvider> logger, ILibraryManager libraryManager)
+        public WizdomSubtitleProvider(ILogger<WizdomSubtitleProvider> logger, ILibraryManager libraryManager, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _libraryManager = libraryManager;
-            _http = new HttpClient();
+            _httpClientFactory = httpClientFactory;
             _configuration = Plugin.Instance?.Configuration;
         }
 
@@ -131,8 +131,9 @@ namespace WizdomSubsDownloader.Providers
             _logger.LogInformation("WizdomSubs: API URL: {Url}", url);
             try
             {
+                var httpClient = _httpClientFactory.CreateClient("WizdomSubs");
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                var json = await _http.GetStringAsync(url, cts.Token).ConfigureAwait(false);
+                var json = await httpClient.GetStringAsync(url, cts.Token).ConfigureAwait(false);
                 var subs = System.Text.Json.JsonSerializer.Deserialize<List<WizdomSub>>(json) ?? new List<WizdomSub>();
 
                 _logger.LogDebug("WizdomSubs: Found {Count} subtitles from API", subs.Count);
@@ -198,7 +199,8 @@ namespace WizdomSubsDownloader.Providers
             var zipUrl = $"{WizdomApiBase}/files/sub/{wizId}";
             try
             {
-                await using var stream = await _http.GetStreamAsync(zipUrl, cancellationToken).ConfigureAwait(false);
+                var httpClient = _httpClientFactory.CreateClient("WizdomSubs");
+                await using var stream = await httpClient.GetStreamAsync(zipUrl, cancellationToken).ConfigureAwait(false);
                 using var zip = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: false);
                 var entry = zip.Entries.FirstOrDefault(e => e.FullName.EndsWith(".srt", StringComparison.OrdinalIgnoreCase))
                           ?? zip.Entries.FirstOrDefault();
@@ -253,8 +255,9 @@ namespace WizdomSubsDownloader.Providers
                     IncludeItemTypes = new[] { Jellyfin.Data.Enums.BaseItemKind.Series },
                     Limit = 1
                 };
-                
-                var series = _libraryManager.GetItemList(query).FirstOrDefault() as Series;
+
+                var queryResult = _libraryManager.GetItemsResult(query);
+                var series = queryResult.Items.FirstOrDefault() as Series;
                 if (series != null)
                 {
                     var seriesImdb = series.GetProviderId(MetadataProvider.Imdb);

@@ -1,2 +1,14 @@
+.claude
 .claude/settings.local.json
 nul
+CLAUDE.md
+
+# Build artifacts
+bin/
+obj/
+*.zip
+
+# Visual Studio
+.vs/
+*.user
+*.suo

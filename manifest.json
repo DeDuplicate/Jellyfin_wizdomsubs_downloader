@@ -20,9 +20,9 @@
         "version": "0.1.0.0",
         "changelog": "Initial preview release: core subtitle provider, config page, manual search & download.",
         "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0.0/WizdomSubsDownloader.zip",
-        "checksum": "78bc373db48f5d5f53602142d3ff9e45",
-        "timestamp": "2025-08-10T00:00:00Z"
+        "sourceUrl": "https://github.com/DeDuplicate/Jellyfin_wizdomsubs_downloader/releases/download/v0.1.0.0/WizdomSubsDownloader-v0.1.0.0.zip",
+        "checksum": "e43c66656169d46c971cc4da827748f0",
+        "timestamp": "2025-11-16T21:34:00Z"
       }
     ]
   }
